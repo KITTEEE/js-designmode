@@ -7,4 +7,4 @@ class Person {
     }
 }
 let p = new Person('kite');
-alert(p.getName());
+// alert(p.getName());
