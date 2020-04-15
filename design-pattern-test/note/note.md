@@ -152,3 +152,88 @@ D-依赖倒置：面向接口编程，依赖于抽象而不依赖于具体。只
 
 javascript 中 SO 体现较多，LID 体现较少，但要了解其用意。
 
+
+
+## 工厂模式
+
+### 介绍
+
+* 将 new 操作单独封装
+* 遇到 new 时，就要考虑是否应使用工厂模式
+
+
+
+### 类图
+
+![工厂模式](.\media\工厂模式.png)
+
+
+
+### 代码实现
+
+```javascript
+class Product {
+    constructor(name) {
+        this.name = name;
+    }
+    init() {
+    	alert('init');
+    }
+    fun1() {
+        alert('fun1');
+    }
+    fun2() {
+        alert('fun2');
+    }
+}
+
+class Creator {
+    create(name) {
+        return new Product(name); 
+    }
+}
+```
+
+
+
+### 使用场景
+
+* jQuery - $('div')
+
+  ```javascript
+  // 这里的函数相当于工厂
+  window.$ = function(selector) {
+      return new jQuery(selector);
+  }
+  ```
+
+* React.createElement 生成一个 vnode 实例
+
+```javascript
+class Vnode(tag,attrs,chilren) {
+    //...
+}
+React.createElement = function (tag,attrs,children) {
+    return new Vnode(tag,attrs,children);
+}
+```
+
+* vue 异步组件
+
+```javascript
+Vue.component('async-example',(resolve,reject) => {
+    setTimeout(() => {
+        resolve({
+            template:'<div>I am a async component</div>'
+        })
+    },1000)
+})
+```
+
+
+
+### 设计原则验证
+
+* 构造函数和创建者分离
+
+* 符合开放封闭原则
