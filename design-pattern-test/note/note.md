@@ -237,3 +237,94 @@ Vue.component('async-example',(resolve,reject) => {
 * 构造函数和创建者分离
 
 * 符合开放封闭原则
+
+
+
+## 单例模式
+
+### 介绍
+
+* 系统中被唯一使用
+
+* 一个类只能初始化一个实例
+
+
+
+### 类图
+
+
+
+
+
+### 代码演示
+
+用 java 实现的单例模式演示
+
+```java
+public class SingleObject {
+    // 一个私有化的构造函数，因此只能在内部 new
+    private SingleObject() {}
+    private SingleObject instance = null;
+    // 获取实例的唯一接口
+    public SingleObject getInstance() {
+        if(instance == null) {
+            instance = new SingleObject(); // 只 new 一次
+        }
+        return instance;
+    }
+}
+```
+
+由于单例模式需要用到 private 这个特性，ES 中没有这个特性，不过可以使用 js 闭包的特性来实现
+
+```javascript
+class SingleObject {
+    testmethod() {
+        console.log('test');
+    }
+}
+SingleObject.getInstance = (function () {
+    let instance = null;
+    return function() {
+    	if(instance == null) {
+            instance = new SingleObject();
+        }   
+        return instance
+    }
+})();
+```
+
+因为单例模式只有一个实例，所以只需要判断你所创建出来的实例是否完全相同即可，可以如下面代码一样测试：
+
+```javascript
+const s1 = SingleObject.getInstance();
+s1.testMethod(); // => 'test'
+const s2 = SingleObject.getInstance();
+s2.testMethod(); // => 'test'
+console.log(s1 === s2); // => true 输出为 true 说明是同一个实例
+```
+
+需要注意的是，由于没有 private 这个禁止了外部 new 的限制，因此这里直接`new SingleObject()`也是可以创建实例的，只不过这样创建实例和普通类创建实例没什么区别。
+
+
+
+### 使用场景
+
+* jQuery 中只有一个 $
+
+```javascript
+if(window.jQuery != null) {
+    return window.jQuery
+}else {
+    // 初始化
+}
+```
+
+* vuex 和 redux 中的 store( 或 store 里的 state )
+
+
+
+### 设计原则验证
+
+* 符合单一职责原则， 只能实例化唯一的对象。
+* 虽然没法具体体现开放封闭原则，但也不违反开放封闭原则。
