@@ -328,3 +328,95 @@ if(window.jQuery != null) {
 
 * 符合单一职责原则， 只能实例化唯一的对象。
 * 虽然没法具体体现开放封闭原则，但也不违反开放封闭原则。
+
+
+
+## 适配器模式
+
+### 介绍
+
+旧的接口格式和使用者不兼容，在他们中间加一个适配来转换
+
+日常例子：插排插头的适配器
+
+
+
+### 类图
+
+
+
+
+
+### 代码演示
+
+```javascript
+class Adaptee {
+    specificRequest() {
+        return `德国标准插头`;
+    }
+}
+
+class Target {
+    constructor() {
+        this.adaptee = new Adaptee();
+    }
+    request() {
+        let info = this.adaptee.specificRequest();
+        return `${info} - 转换器 - 中国标准插头`
+    }
+}
+// 测试
+let target = new Target();
+let res = target.request();
+console.log(res);
+```
+
+
+
+### 使用场景
+
+* vue 的 computed
+
+```javascript
+const vm = new Vue({
+	el:'#app',
+	data: {
+		message:'hello'
+	},
+	computed: {
+		reversMessage:function () {
+			return message.split('').reverse().joi n('');
+		}
+	}
+})
+```
+
+
+
+* 旧接口的封装
+
+假如项目中的请求库需要更换，你封装了这么一个方法
+
+```javascript
+axios({url:'xxx',data:{},type:'post'}).done(() => {
+    // ... 
+})
+```
+
+这时候假如之前项目里用的请求库是 jquery 的 ajax 请求，项目里就会有很多 `$.ajax({...})`的请求代码，这时候就可以写一个适配器来转换，如下：
+
+```javascript
+var $ = {
+    // ...
+    ajax:function(data) {
+        return axios(data);
+    } 
+}
+```
+
+
+
+### 设计原则验证
+
+* **将旧接口与使用者分离**
+* **符合开放封闭原则**
