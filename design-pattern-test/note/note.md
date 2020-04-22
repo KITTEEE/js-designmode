@@ -343,7 +343,7 @@ if(window.jQuery != null) {
 
 ### 类图
 
-
+![适配器模式](F:\js-design-mode\design-pattern-test\note\media\适配器模式.png)
 
 
 
@@ -420,3 +420,248 @@ var $ = {
 
 * **将旧接口与使用者分离**
 * **符合开放封闭原则**
+
+
+
+
+
+## 装饰器
+
+### 介绍
+
+* 为对象添加新功能
+* 不改变其原有的结构和功能
+
+
+
+### 类图
+
+![装饰器模式](F:\js-design-mode\design-pattern-test\note\media\装饰器模式.png)
+
+
+
+### 代码演示
+
+```javascript
+class Circle {
+    draw() {
+        console.log('画了一个圆');
+    }
+}
+
+class Decorator {
+    constructor(circle) {
+        this.circle = circle;
+    }
+    draw() {
+        this.circle.draw();
+        this.setRedBorder();
+    }
+    setRedBorder() {
+        console.log('添加红色边框')
+    }
+}
+// 测试
+let circle = new Circle();
+circle.draw(); // => 画了一个圆
+let dec = new Decorator(circle);
+dec.draw(); // => 画了一个圆  添加红色边框
+```
+
+
+
+### 使用场景
+
+* ES7 装饰器模式
+
+  装饰类
+
+  ```javascript
+  @testDec
+  class Demo {
+      
+  }
+  function testDec(target) {
+      target.isDec = true;
+  }
+  alert(Demo.isDec);
+  ```
+
+  
+
+* core-decorators 一个用于提供装饰器的库，如给某个方法提供一些常用装饰。
+
+  ```
+  npm i core-decorators --save-dev
+  ```
+
+  ```javascript
+  import { readonly, deprecate } from 'core-decorators';
+  class Person {
+      @readonly
+      @deprecate('即将废弃', { url: 'www.baidu.com' })
+      print() {
+          return 'zhangsan';
+      }
+  }
+  
+  let p = new Person();
+  p.print();
+  p.print = function () {}; // => 报错
+  ```
+
+
+
+### 设计原则验证
+
+* 将现有对象和装饰器分离，两者独立存在
+* 符合开放封闭原则
+
+
+
+
+
+## 代理模式
+
+### 介绍
+
+* 使用者无权直接访问目标对象
+* 在使用者和目标对象中间加代理，通过代理来做授权和控制
+
+
+
+### 类图
+
+![代理模式](F:\js-design-mode\design-pattern-test\note\media\代理模式.png)
+
+
+
+###  代码演示
+
+```javascript
+class RealImg {
+    constructor(filename){
+        this.filename = filename;
+        this.loadImg();
+    }
+    display() {
+        console.log('display... ' + this.filename);
+    }
+    loadImg() {
+        console.log('loading... ' + this.filename)
+    }
+}
+
+class ProxyImg {
+    constructor(filename) {
+        this.realImg = new RealImg(filename);
+    }
+    display() {
+        this.realImg.display();
+    }
+}
+// 测试代码
+let proxyImg = new ProxyImg('1.png');
+proxyImg.display();
+```
+
+
+
+### 使用场景
+
+* 网页事件代理（事件委托）
+
+```html
+<div id="proxy">
+    <a href="#">a1</a>
+    <a href="#">a2</a>
+    <a href="#">a3</a>
+    <a href="#">a4</a>
+    <a href="#">a5</a>
+</div>
+```
+
+```javasc
+<script>
+	var proxy = document.getElementById('proxy');
+	proxy.addEventListener('click',function(e) {
+		var target = e.target;
+		if(target.nodeName === 'A') {
+			alert(target.innerHTML);
+		}
+	})
+</script>
+```
+
+
+
+* jQuery 中的 $.proxy
+
+下面这个例子中的 this 是不符合预期的，this 会指向 window。
+
+```javascript
+$('#proxy').click(function() {
+    setTimeout(function() {
+        $(this).addClass('red');
+    },1000)
+})
+
+```
+
+一般的解决方法：
+
+```javascript
+$('#proxy').click(function() {
+    var _this = this;
+    setTimeout(function() {
+        $(_this).addClass('red');
+    },1000)
+})
+```
+
+使用 $.proxy：
+
+```javascript
+$('#proxy').click(function() {
+    var fn = function() {
+        $(this).addClass('red');
+    }
+    fn = $.proxy(fn,this);
+    setTimeout(fn,1000);
+})
+// 简化后：
+$('#proxy').click(function() {
+    setTimeout($.proxy(function() {
+        $(this).addClass('red')
+    },this),1000)
+})
+```
+
+
+
+* ES6 新特性 Proxy
+
+
+
+### 设计原则验证
+
+* 代理类和目标类分离，隔离开目标类和使用者
+* 符合开放封闭原则
+
+
+
+### 和类似的设计模式的区别
+
+* **代理模式和适配器模式的区别**
+
+  1. 适配器模式提供的接口和目标类不同，是对目标类接口的转换（类似不同的插头），而代理模式提供的是一模一样的接口。
+
+  2. 代理模式是无权使用目标类的，但可以通过代理来做到直接使用目标类的效果。而适配器模式可以使用目标类，但是由于某些原因无法使用，所以需要通过适配器来做转换使得可以达到目标类的效果。
+
+
+
+* **代理模式和装饰器模式的区别**
+
+  装饰器模式不会改变目标类原有功能的使用，同时可以给原有功能进行扩展。而代理模式可以看作是对目标类原有功能进行了限制或阉割。
+
+  可以简单理解成装饰器模式更适合对目标类进行扩展，代理模式更适合对目标类进行控制。

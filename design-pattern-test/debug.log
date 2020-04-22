@@ -1,0 +1,10 @@
+[0420/103809.460:ERROR:process_info.cc(359)] UncheckedAllocate
+[0420/103809.489:ERROR:process_info.cc(359)] UncheckedAllocate
+[0420/103859.582:ERROR:process_info.cc(359)] UncheckedAllocate
+[0420/103911.469:ERROR:process_info.cc(359)] UncheckedAllocate
+[0420/103916.041:ERROR:process_info.cc(359)] UncheckedAllocate
+[0420/103916.067:ERROR:file_io.cc(134)] WriteFile: 配额不足，无法完成请求的服务。 (0x5AD)
+[0420/103916.070:ERROR:crash_report_exception_handler.cc(111)] WriteEverything failed
+[0420/103916.071:ERROR:filesystem_win.cc(148)] DeleteFile C:\Users\lenovo\AppData\Local\Google\Chrome\User Data\Crashpad\reports\1df7af03-b55b-4a52-8f27-e0da62ef782b.dmp: 另一个程序正在使用此文件，进程无法访问。 (0x20)
+[0420/110939.115:ERROR:process_info.cc(359)] UncheckedAllocate
+[0420/171120.687:ERROR:process_info.cc(359)] UncheckedAllocate

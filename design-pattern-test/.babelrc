@@ -1,4 +1,4 @@
 {
     "presets": ["@babel/react", "@babel/env"],
-    "plugins": []
+    "plugins": [["@babel/plugin-proposal-decorators", { "legacy": true }]]
 }
