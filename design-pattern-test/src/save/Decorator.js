@@ -18,10 +18,9 @@ class Decorator {
     }
 }
 
-let circle = new Circle();
-circle.draw();
 
-console.log('-----------');
 
-let dec = new Decorator(circle);
+
+
+let dec = new Decorator(new Circle(););
 dec.draw();
