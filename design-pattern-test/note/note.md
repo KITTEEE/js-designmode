@@ -665,3 +665,166 @@ $('#proxy').click(function() {
   装饰器模式不会改变目标类原有功能的使用，同时可以给原有功能进行扩展。而代理模式可以看作是对目标类原有功能进行了限制或阉割。
 
   可以简单理解成装饰器模式更适合对目标类进行扩展，代理模式更适合对目标类进行控制。
+
+
+
+
+
+## 观察者模式
+
+### 介绍
+
+* 前端最常用的设计模式
+
+* 发布-订阅
+* 一对多
+
+
+
+### 类图
+
+![观察者模式](F:\js-design-mode\design-pattern-test\note\media\观察者模式.png)
+
+### 代码演示
+
+```javascript
+class Subject() {
+    constructor() {
+        this.state = 0;
+        this.observers = []
+    }
+    getState() {
+        return this.state;
+    }
+    setState(state) {
+        this.state = state
+        this.notifyAllObeservers();
+    }
+    notifyAllOberservers() {
+        this.observers.forEach(observer => {
+            observer.update();
+        })
+    }
+    attach(observer) {
+        this.observers.push(observer);
+    }
+}
+
+class Observer {
+    constructor(name,subject) {
+        this.name = name;
+        this.subject = subject;
+        this.subject.attch(this);
+    }
+    update() {
+        console.log(`${this.name} state is update to ${this.subject.state}`)
+    }
+}
+// 测试代码
+let s = new Subject();
+
+let o1 = new Observer('o1',s);
+let o2 = new Observer('o2',s);
+s.setState(2);
+s.setState(3);
+
+```
+
+
+
+### 使用场景
+
+* 网页事件绑定
+
+  ```html
+  <button id="btn1">btn</button>
+  <script>
+  	$('#btn1').click(function() {
+          console.log(1);
+      })
+  </script>
+  ```
+
+* Promise
+
+  promise 中的 `.then` 事实上就是在 promise 的状态变更的时候触发的。
+
+  ```javascript
+  var src = 'http://xxx.com/static/img/logo.png';
+  var result = loadImg(src); // 假设 loadImg 为一个异步处理函数
+  result.then(function (img) {
+      console.log('width',img.width);
+  }).then(function(img) {
+      console.log('height',img.height)
+  })
+  ```
+
+  
+
+* jQuery callbacks
+
+  ```html
+  <script src='jquery.js'></script>
+  <script>
+  	var callbacks = $.Callbacks();
+      callbacks.add(function (info) {
+          console.log('fn1',info);
+      })
+      callbacks.add(function (info) {
+          console.log('fn2',info);
+      })
+      
+      callbacks.fire('go');
+      callbacks.fire('fire');
+  </script>
+  // log => 'fn1 go' 'fn2 go' 'fn1 fire' 'fn2 fire'
+  ```
+
+* nodejs 自定义事件
+
+  ```javascript
+  const EventEmitter = require('events').EventEmitter;
+  const emitter = new EventEmitter();
+  
+  emitter.on('some',() => { // 监听 some 事件
+      console.log('some event is emit once');
+  })
+  emitter.on('some',() => { // 监听 some 事件
+      console.log('some event is emit twice');
+  })
+  emitter.emit('some'); // 触发事件
+  ```
+
+  任何的 class 或构造函数都能继承 EventEmitter 的 on 和 emit 方法
+
+  ```javascript
+  const EventEmitter = require('events').EventEmitter;
+  class Dog extends EventEmitter {
+      constructor(name) {
+          super();
+          this.name = name;
+      } 
+  }
+  var simon = new Dog('simon');
+  simon.on('bark',barkLike => {
+      console.log(this.name,barkLike)
+  })
+  setInterval(() => {
+      simon.emit('bark','woff woff woff');
+  }.1000)
+  ```
+
+  node 中的 Stream 模块用到了自定义事件
+
+  ```javascript
+  const readStream = fs.createReadStream('01.txt');	
+  let length = 0;
+  readStream.on('data',function(chunk) => {
+  	length += chunck.toString().length              
+  })
+  readStream.on('end',function() => {
+  	console.log(length);
+  })
+  ```
+
+  
