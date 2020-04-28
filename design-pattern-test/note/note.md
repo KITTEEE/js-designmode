@@ -827,4 +827,156 @@ s.setState(3);
   })
   ```
 
-  
+* nodejs中处理 http 请求，多进程通讯
+* vue 和 React 组件生命周期触发
+* vue watch
+
+
+
+### 设计原则验证
+
+* 主题和观察者分离，不是主动触发而是被动监听，两者解耦
+* 符合开放封闭原则
+
+
+
+
+
+## 迭代器模式
+
+### 介绍
+
+* 顺序访问一个集合
+* 使用者无需知道集合的内部结构(封装)
+
+
+
+### 类图
+
+![iterator](media/iterator.png)
+
+
+
+### 代码演示
+
+```javascript
+// 集合容器
+class Container {
+    constructor(list) {
+        this.list = list
+    } 
+    getIterator() {
+        return new Iterator(this);
+    }
+}
+
+// 迭代器
+class Iterator {
+    constructor(container) {
+        this.list = container.list
+        this.index = 0;
+    }
+    next() {
+        if(this.hasNext()) {
+            return this.list[this.index++];
+        }
+        return null
+    }
+    hasNext() {
+        if(this.index >= this.list.length) {
+            return false
+        }
+        return true
+    }
+}
+
+// 测试代码
+let arr = [1, 2, 3, 4, 5, 6, 7];
+let container = new Container(arr);
+let it = new Iterator(container);
+while (it.hasNext()) {
+    console.log(it.next());
+}
+```
+
+
+
+
+
+### 场景
+
+* jQuery each ：编写一个函数能够同时遍历数组、node 节点、和 jQuery 元素
+
+  ```html
+  <div>
+      <p>jquery each</p>
+      <p>jquery each</p>
+      <p>jquery each</p>
+  </div>
+  <script>
+  	var arr = [1,2,3];
+      var nodeList = document.getElementByTagName('p');
+      var $p = $('p');
+      function each(data) {
+          // jquery 中有迭代方法 each
+          // 可以将 data 变成一个 jquery 对象，使用 each 遍历
+          var $data = $(data);
+          $data.each(function(key,value) {
+              console.log('key:',key,'value:',value);
+          })
+      }
+      each(arr);
+      each(nodeList);
+      each($p);
+  </script>
+  ```
+
+* **ES6 Iterator**
+
+  **为何 ES6 中要有Iterator** ：ES6 中，有序集合的数据类型有很多（Array / Map / Set / String / arguments / NodeList），传统的`for` 和 `for...in` 只能简单地遍历数组或对象，因此需要有一个统一的遍历接口，可以用来遍历所有的有序数据集合。
+
+  > 注意：Object 不是有序数据集合，可以用 Map 代替
+
+  **Iterator 是什么：**有序集合原型上都具有`[Symbol.iterator]`属性，其属性值为一个函数，执行这个函数就会返回一个迭代器，这个迭代器有 `next` 方法可以顺序迭代子元素。
+
+  ```javascript
+  // 示例：
+  function each(data) {
+      let iterator = data[Symbol.iterator]();
+      let item = {done:false}
+      while(!item.done) {
+          item = iterator.next();
+          if(!item.done) {
+              console.log(item.value);
+          }
+      }
+  }
+  // 演示数组和字符串结构，其他有序集合也可以
+  let arr = [1, 2, 3, 4, 5, 6];
+  let str = '123456';
+  each(arr);
+  each(str);
+  ```
+
+  但是由于 ES6 的 `Symbol.Iterator`不是每个人都知道，每次实现都要使用这个属性的化未免太麻烦，因此 ES6 提供了 `for...of`，可以用来遍历所有具有 Iterator 接口的数据结构。
+
+  ```javascript
+  function each(data) {
+      for(let item of data) {
+          console.log(item);
+      }
+  }
+  // 演示数组和字符串结构，其他有序集合也可以
+  let arr = [1, 2, 3, 4, 5, 6];
+  let str = '123456';
+  each(arr);
+  each(str);
+  ```
+
+
+
+### 设计模式验证
+
+* 迭代器对象和目标对象分离
+* 迭代器将使用者和目标对象隔离开
+* 符合开放封闭原则 
