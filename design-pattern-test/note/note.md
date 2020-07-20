@@ -343,7 +343,7 @@ if(window.jQuery != null) {
 
 ### 类图
 
-![适配器模式](F:\js-design-mode\design-pattern-test\note\media\适配器模式.png)
+![适配器模式](.\media\适配器模式.png)
 
 
 
@@ -436,7 +436,7 @@ var $ = {
 
 ### 类图
 
-![装饰器模式](F:\js-design-mode\design-pattern-test\note\media\装饰器模式.png)
+![装饰器模式](.\media\装饰器模式.png)
 
 
 
@@ -532,7 +532,7 @@ dec.draw(); // => 画了一个圆  添加红色边框
 
 ### 类图
 
-![代理模式](F:\js-design-mode\design-pattern-test\note\media\代理模式.png)
+![代理模式](.\media\代理模式.png)
 
 
 
@@ -683,7 +683,7 @@ $('#proxy').click(function() {
 
 ### 类图
 
-![观察者模式](F:\js-design-mode\design-pattern-test\note\media\观察者模式.png)
+![观察者模式](.\media\观察者模式.png)
 
 ### 代码演示
 
@@ -980,3 +980,85 @@ while (it.hasNext()) {
 * 迭代器对象和目标对象分离
 * 迭代器将使用者和目标对象隔离开
 * 符合开放封闭原则 
+
+
+
+
+
+## 状态模式
+
+### 介绍
+
+* 一个对象有状态的变化，如交通信号灯不同颜色的变化
+* 每次状态变化都会触发一个逻辑
+* 不能总是使用 if...else 来控制
+
+
+
+### 类图
+
+![state](media/状态模式.png)
+
+
+
+### 代码演示
+
+```javascript
+// 状态
+class State {
+  constructor(color) {
+    this.color = color;
+  }
+  handle(context) {
+    console.log(`the light turn to the ${this.color} color`);
+    context.setState(this);
+  }
+}
+
+// 主体
+class Context {
+  constructor() {
+    this.state = null;
+  }
+  getState() {
+    return this.state;
+  }
+	setState(state) {
+    this.state = state;
+  }
+}
+
+// 测试代码
+let ctx = new Context();
+let green = new State('green');
+let red = new State('red');
+let yellow = new State('yellow');
+
+green.handle(ctx);
+console.log(ctx.getState());
+
+red.handle(ctx);
+console.log(ctx.getState());
+
+yellow.handle(ctx);
+console.log(ctx.getState());
+```
+
+
+
+### 场景
+
+* **有限状态机**
+
+
+
+
+
+* **实现简单的 promise**
+
+
+
+### 设计模式验证
+
+* 将状态对象和主体对象分离，状态的变化逻辑单独处理
+* 符合开放封闭原则
