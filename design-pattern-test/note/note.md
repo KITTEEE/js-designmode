@@ -1062,3 +1062,292 @@ console.log(ctx.getState());
 
 * 将状态对象和主体对象分离，状态的变化逻辑单独处理
 * 符合开放封闭原则
+
+
+
+
+
+## 原型模式
+
+### 概念和用意
+
+* clone 自己，生成一个新对象
+
+
+
+### JS 中的应用
+
+Object.create 方法用到了原型模式的思想
+
+```javascript
+ // 一个原型对象
+const prototype = {
+  getName:function() {
+    return this.first + this.last;
+  },
+  say:function() {
+    alert('hello');
+  }
+}
+
+// 基于原型创建 x
+let x = Object.create(prototype);
+x.first = 'A';
+x.last = 'B';
+alert(x.getName());
+x.say()
+// 基于原型创建 y
+let x = Object.create(prototype);
+y.first = 'A';
+y.last = 'B';
+alert(y.getName());
+y.say()
+```
+
+
+
+### 对比 JS 中的原型  prototype
+
+* prototype 可以理解为 ES6 class 的一种底层原理，且 class 是实现面向对象的基础，并不是服务于某个模式  
+
+
+
+
+
+## 桥接模式
+
+* 用于把抽象化和实现化解耦
+* 使得二者可以独立变化
+
+
+
+```javascript
+class Color {
+  constructor(name) {
+    this.name = name;
+  }
+} 
+
+class Shape {
+  constructor(name,color) {
+    this.name = name;
+    this.color = color;
+  },
+  draw() {
+    console.log(`${this.color.name} ${this.name}`);
+  }
+}
+
+// 测试代码
+let red = new Color('red');
+let yellow = new Color('yellow');
+let circle = new Shape('circle',red);
+circle.draw();
+let triangle = new Shape('triangle',yellow);
+triangle.draw();
+```
+
+
+
+
+
+## 组合模式
+
+### 概念
+
+* 生成树形结构，表示 整体-部分 关系
+
+* 让整体和部分都具有一致的操作方式
+* 如 文件夹-文件 的关系
+
+
+
+### js 中的应用
+
+虚拟 dom 中的 vnode 是这种形式，但数据类型简单
+
+Vue-router 中的路由树
+
+
+
+### 演示
+
+```html
+<div id="div1" class="container">
+  <p>123</p>
+  <p>456</p>
+</div>
+```
+
+上述 html 转化为 vnode：
+
+```javascript
+{
+  tag:'div',
+  attr:{
+    id:'div1',
+    className:'container'
+  },
+  children: [
+    {
+    	tag:'p',
+    	attr:{},
+    	children:['123']
+  	},
+    {
+    	tag:'p',
+    	attr:{},
+    	children:['456']
+  	}
+  ]
+}
+```
+
+
+
+## 享元模式
+
+* 共享内存(主要考虑内存，而非效率)
+* 相同的数据，共享使用
+
+* js 中未有经典的应用场景
+
+
+
+
+
+## 策略模式
+
+* 不同策略分开处理，不混在一起
+* 避免出现大量的 if...else
+
+```javascript
+// 不使用策略模式
+class User {
+  constructor(type) {
+    this.type = type
+  }
+  buy() {
+    if(this.type === 'ordinary') {
+      console.log('普通用户购买');
+    }else if(this.type === 'member') {
+      console.log('会员用户购买');
+    }else if(this.type === 'vip') {
+      console.log('vip 用户购买')
+    }
+  }
+}
+
+// 使用策略模式
+class OrdinaryUser {
+  buy() {
+    console.log('普通用户购买');
+  }
+}
+
+class MemberUser {
+  buy() {
+    console.log('会员用户购买')
+  }
+}
+
+class VipUser {
+  buy() {
+    console.log('vip 用户购买')
+  }
+}
+let u1 = new OrdinaryUser();
+u1.buy(); 
+let u2 = new MemberUser();
+u2.buy();
+let u3 = new VipUser();
+u3.buy();
+```
+
+
+
+## 模板方法模式
+
+
+
+
+
+## 职责链模式
+
+* 一步操作可能分为多个职责角色来完成
+* 把这些角色都分开，然后用一个链串起来
+* 将发起者和各个处理者进行隔离 
+
+
+
+```javascript
+// 请假审批
+class Action {
+  constructor(name) {
+    this.name = name;
+    this.nextAction = null;
+  }
+  setNextAction(action) {
+    this.nextAction = action;
+  }
+  handle() {
+    console.log(`${this.name}审批`);
+    if(this.nextAction != null) {
+      this.nextAction.handle();
+    }
+  }
+}
+let a1 = new Action('组长');
+let a2 = new Action('经理');
+let a3 = new Action('总监');
+a1.setNextAction(a2);
+a2.setNextAction(a3);
+a1.handle()
+```
+
+
+
+
+
+## 命令模式
+
+* 执行命令时，发布者和执行者分开
+
+* js 中的应用：网页富文本编辑器操作
+
+```javascript
+// 接收者
+class Receiver {
+  exec() {
+    console.log('执行');
+  }
+}
+
+// 命令者/命令对象
+class Command {
+  constructor(receiver) {
+    this.receiver = receiver
+  }
+  cmd() {
+    console.log('触发命令');
+		this.receiver.exec();
+  }
+}
+
+// 触发者
+class Invoker {
+  constructor(command) {
+    this.command = command
+  }
+  invoke() {
+    console.log('开始');
+    this.command.cmd();
+  }
+}
+
+let soldier = new Receiver();
+let trumpeter = new Command(soldier);
+let general = new Invoker(trumpeter);
+general.invoke();
+```
+
